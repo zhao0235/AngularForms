@@ -1,59 +1,61 @@
-<div class="form">
+<div class="form myForm" [ngClass]="formStatus">
   <h2 id="registration">Registration Form</h2>
-  <form (ngSubmit)="onSubmit()" #myForm="ngForm">
-    <div ngModelGroup="personDetails" #personalDetail="ngModelGroup">
+  <form [formGroup]="reactiveForm" (ngSubmit)="onSubmit()">
+    <div formGroupName="personalDetails">
       <label for="fname">First Name</label>
       <input
         type="text"
         id="fname"
         placeholder="Your name.."
-        name="firstname"
-        [(ngModel)]="firstname"
-        required
-        #fname="ngModel"
+        formControlName="firstname"
       />
-      <!-- 'ngModel' tells Angular this input element is the control of 'form' -->
-      <!-- <div>
-          <small *ngIf="fname.invalid && fname.touched">First Name is a required field</small>
-          <span *ngIf="firstname">You entered {{firstname}}</span>
-        </div> -->
+      <div>
+        <small
+          *ngIf="
+            reactiveForm.get('personalDetails.firstname').errors?.['required']
+          "
+          >First name is a required field.</small
+        >
+        <!-- Knowledge Equalizing Operator: this operator will not evaluate any further expression once it's null. If the error object evaluation is null, the further expression will be ignore-->
+        <small
+          *ngIf="
+            reactiveForm.get('personalDetails.firstname').errors?.[
+              'noSpaceAllowed'
+            ]
+          "
+          >First name cannot contain a space.</small
+        >
+      </div>
 
       <label for="lname">Last Name</label>
       <input
         type="text"
         id="lname"
         placeholder="Your last name.."
-        name="lastname"
-        [(ngModel)]="lastname"
-        required
+        formControlName="lastname"
       />
-      <!-- <div>
-          <span *ngIf="lastname">You entered {{lastname}}</span>
-        </div> -->
 
       <label for="email">Email</label>
       <input
         type="email"
         id="email"
-        name="email"
         placeholder="Your last email.."
-        name="email"
-        ngModel
-        required
-        email
+        formControlName="email"
       />
-      <!-- add email validation -->
-
-      <div>
-        <small *ngIf="personalDetail.invalid && personalDetail.touched"
-          >Some of the required fields does not have valid value.</small
-        >
-      </div>
-      <button (click)="setDefaultValues()">Set Default Values</button>
+    </div>
+    <div>
+      <span
+        style="color: red"
+        *ngIf="
+          !reactiveForm.get('personalDetails.email').valid &&
+          reactiveForm.get('personalDetails.email').touched
+        "
+        >The email you entered is not a valid email.</span
+      >
     </div>
 
     <label for="country">Country</label>
-    <select id="country" name="country" [ngModel]="defaultCountry">
+    <select id="country" formControlName="country">
       <option value="australia">Australia</option>
       <option value="canada">Canada</option>
       <option value="usa">USA</option>
@@ -62,57 +64,63 @@
     </select>
 
     <label for="gender">Gender:</label>
-    <span *ngFor="let gen of gender">
-      <input
-        type="radio"
-        id="{{ gen.id }}"
-        value="{{ gen.value }}"
-        name="gender"
-        [ngModel]="defaultGender"
-      />
-      <label for="male">{{ gen.value }}</label>
-    </span>
+    <input type="radio" id="male" value="male" formControlName="gender" />
+    <label for="gender">Male</label>
+    <input type="radio" id="female" value="female" formControlName="gender" />
+    <label for="gender">Female</label>
+    <input type="radio" id="other" value="other" formControlName="gender" />
+    <label for="gender">Other</label>
+
     <br /><br />
 
     <label>Hobbies <i>(Optional)</i></label>
     <div class="form-inline">
       <label
-        ><input type="checkbox" value="sports" name="hobbies" ngModel />
+        ><input type="checkbox" value="sports" formControlName="hobbies" />
         Sports</label
       >
       <label
-        ><input type="checkbox" value="movies" name="hobbies" ngModel />
+        ><input type="checkbox" value="movies" formControlName="hobbies" />
         Movies</label
       >
       <label
-        ><input type="checkbox" value="music" name="hobbies" ngModel />
+        ><input type="checkbox" value="music" formControlName="hobbies" />
         Music</label
       >
     </div>
 
-    <input
-      type="submit"
-      value="Submit"
-      id="btn"
-    /><!--[disabled]="!myForm.valid"-->
-  </form>
-</div>
+    <div formArrayName="skills">
+      <ng-container
+        *ngFor="let skill of reactiveForm.get('skills')['controls']; index as i"
+      >
+        <input
+          type="text"
+          placeholder="add skill.."
+          formControlName="{{ i }}"
+        />
+      </ng-container>
+      <button (click)="addSkills()">+ Add Skills</button>
+    </div>
 
-<div class="form-data">
-  <h3>Form Data</h3>
-  <p>
-    First Name: <b>{{ firstname }}</b>
-  </p>
-  <p>
-    Last Name: <b>{{ lastname }}</b>
-  </p>
-  <p>
-    Email: <b>{{ email }}</b>
-  </p>
-  <p>
-    Country: <b>{{ country }}</b>
-  </p>
-  <p>
-    Gender: <b>{{ gen }}</b>
-  </p>
+    <input type="submit" value="Submit" id="btn" />
+
+    <!-- <div class="form-data">
+      <h3>Form Data</h3>
+      <p>
+        First Name: <b>{{ firstname }}</b>
+      </p>
+      <p>
+        Last Name: <b>{{ lastname }}</b>
+      </p>
+      <p>
+        Email: <b>{{ email }}</b>
+      </p>
+      <p>
+        Country: <b>{{ country }}</b>
+      </p>
+      <p>
+        Gender: <b>{{ gen }}</b>
+      </p>
+    </div> -->
+  </form>
 </div>

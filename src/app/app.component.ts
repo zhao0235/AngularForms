@@ -1,64 +1,119 @@
-import { Component, ViewChild } from '@angular/core';
-import { NgForm } from '@angular/forms';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
 })
-export class AppComponent {
-  title = 'AngularForms';
-  defaultCountry = 'india';
+export class AppComponent implements OnInit {
+  title = 'ReactiveForms';
+  reactiveForm: FormGroup;
+  formStatus;
 
-  firstname:string;
-  lastname:string;
-  email: string;
-  gen:string;
-  country: string;
+  ngOnInit(): void {
+    this.reactiveForm = new FormGroup({
+      personalDetails: new FormGroup({
+        firstname: new FormControl(null, [
+          Validators.required,
+          this.noSpaceAllowed,
+        ]),
+        lastname: new FormControl(null, [
+          Validators.required,
+          this.noSpaceAllowed,
+        ]),
+        email: new FormControl(null, [
+          Validators.required,
+          Validators.email,
+          this.emailNotAllowed,
+        ]),
+      }),
+      gender: new FormControl('male'), //set default value
+      country: new FormControl('india'),
+      hobbies: new FormControl(null),
+      skills: new FormArray([new FormControl(null, Validators.required)]),
+    });
 
-  defaultGender = 'Female';
+    // this.reactiveForm
+    //   .get('personalDetails.firstname')
+    //   .valueChanges.subscribe((value) => {
+    //     console.log(value);
+    //   });
 
-  gender = [
-    {id: '1', value: 'Male'},
-    {id: '2', value: 'Female'},
-    {id: '3', value: 'Other'}
-  ]
-  
-  @ViewChild('myForm') form: NgForm;
+    // this.reactiveForm.valueChanges.subscribe((value) => {
+    //   console.log(value);
+    // });
 
-  onSubmit(){
-    console.log(this.form);
+    this.reactiveForm.statusChanges.subscribe((value) => {
+      console.log(value);
+      this.formStatus = value;
+    });
 
-    this.firstname = this.form.value.personDetails.firstname;
-    this.lastname = this.form.value.personDetails.lastname;
-    this.email = this.form.value.personDetails.email;
-    this.gen = this.form.value.gender;
-    this.country = this.form.value.country;
+    // How to use setValue method
+    // setTimeout(() => {
+    //   this.reactiveForm.setValue({
+    //     personalDetails: {
+    //       firstname: '',
+    //       lastname: '',
+    //       email: 'abc@example.com',
+    //     },
+    //     gender: '',
+    //     country: '',
+    //     hobbies: '',
+    //     skills: [],
+    //   });
+    // }, 4000);
 
-    this.form.reset();
+    // How to use patchValue method
+    setTimeout(() => {
+      this.reactiveForm.patchValue({
+        personalDetails: {
+          email: 'abc@example.com',
+        },
+      });
+    }, 4000);
   }
 
-  setDefaultValues(){
-    // this.form.value.personDetails.firstname = 'John';
-    // this.form.value.personDetails.lastname = 'smith';
-    // this.form.value.personDetails.email = 'abc@example.com';
-    // this.form.setValue({
-    //   country: '',
-    //   gender: '',
-    //   hobbies: '',
-    //   personDetails: {
-    //     firstname: 'John',
-    //     lastname: 'Smith',
-    //     email: 'abc@example.com'
-    //   }
-    // })
+  onSubmit() {
+    console.log(this.reactiveForm);
+    this.reactiveForm.reset({
+      personalDetails: {
+        firstname: '',
+        lastname: '',
+        email: '',
+      },
+      gender: 'male',
+      country: 'india',
+      hobbies: '',
+      skills: [],
+    });
+  }
 
-    this.form.form.patchValue({
-      personDetails: {
-         firstname: 'John',
-         lastname: 'Smith',
-         email: 'abc@example.com'
-      }
-    })
+  addSkills() {
+    (<FormArray>this.reactiveForm.get('skills')).push(
+      new FormControl(null, Validators.required)
+    );
+  }
+
+  noSpaceAllowed(control: FormControl) {
+    if (control.value != null && control.value.indexOf(' ') != -1) {
+      return { noSpaceAllowed: true };
+    }
+    return null;
+  }
+
+  //custom async validator
+  emailNotAllowed(control: FormControl): Promise<any> | Observable<any> {
+    const response = new Promise((resolve, reject) => {
+      setTimeout(() => {
+        if (control.value === 'tobeupdate@gmail.com') {
+          resolve({ emailNotAllowed: true });
+        } else {
+          resolve(null);
+        }
+      }, 5000);
+    });
+    return response;
   }
 }
