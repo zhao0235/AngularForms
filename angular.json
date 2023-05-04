@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "AngularForms": {
+    "AngularHttpRequest": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:application": {
@@ -17,17 +17,55 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/angular-forms",
+            "outputPath": "dist/angular-http-request",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              {
+                "glob": "**/*.svg",
+                "input": "node_modules/ionicons/dist/ionicons/svg",
+                "output": "./svg"
+              }
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles.css",
+              {
+                "input": "node_modules/@ionic/angular/css/core.css"
+              },
+              {
+                "input": "node_modules/@ionic/angular/css/normalize.css"
+              },
+              {
+                "input": "node_modules/@ionic/angular/css/structure.css"
+              },
+              {
+                "input": "node_modules/@ionic/angular/css/typography.css"
+              },
+              {
+                "input": "node_modules/@ionic/angular/css/display.css"
+              },
+              {
+                "input": "node_modules/@ionic/angular/css/padding.css"
+              },
+              {
+                "input": "node_modules/@ionic/angular/css/float-elements.css"
+              },
+              {
+                "input": "node_modules/@ionic/angular/css/text-alignment.css"
+              },
+              {
+                "input": "node_modules/@ionic/angular/css/text-transformation.css"
+              },
+              {
+                "input": "node_modules/@ionic/angular/css/flex-utils.css"
+              },
+              {
+                "input": "src/theme/variables.css"
+              }
             ],
             "scripts": []
           },
@@ -68,10 +106,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "AngularForms:build:production"
+              "browserTarget": "AngularHttpRequest:build:production"
             },
             "development": {
-              "browserTarget": "AngularForms:build:development"
+              "browserTarget": "AngularHttpRequest:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -79,7 +117,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "AngularForms:build"
+            "browserTarget": "AngularHttpRequest:build"
           }
         },
         "test": {
@@ -91,16 +129,45 @@
             "karmaConfig": "karma.conf.js",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              {
+                "glob": "**/*.svg",
+                "input": "node_modules/ionicons/dist/ionicons/svg",
+                "output": "./svg"
+              }
             ],
             "styles": [
               "src/styles.css"
             ],
             "scripts": []
           }
+        },
+        "ionic-cordova-serve": {
+          "builder": "@ionic/angular-toolkit:cordova-serve",
+          "options": {
+            "cordovaBuildTarget": "AngularHttpRequest:ionic-cordova-build",
+            "devServerTarget": "AngularHttpRequest:serve"
+          },
+          "configurations": {
+            "production": {
+              "cordovaBuildTarget": "AngularHttpRequest:ionic-cordova-build:production",
+              "devServerTarget": "AngularHttpRequest:serve:production"
+            }
+          }
+        },
+        "ionic-cordova-build": {
+          "builder": "@ionic/angular-toolkit:cordova-build",
+          "options": {
+            "browserTarget": "AngularHttpRequest:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "AngularHttpRequest:build:production"
+            }
+          }
         }
       }
     }
   },
-  "defaultProject": "AngularForms"
+  "defaultProject": "AngularHttpRequest"
 }
