@@ -33,6 +33,7 @@ input[type="submit"]:hover {
   margin: 30px auto;
 }
 
+/* when the input field is touched and when the data is invalid, highlight the field */
 input.ng-invalid.ng-touched {
   border: red 1px solid;
 }

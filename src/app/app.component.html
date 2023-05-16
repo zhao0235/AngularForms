@@ -1,6 +1,7 @@
 <div class="form myForm" [ngClass]="formStatus">
   <h2 id="registration">Registration Form</h2>
   <form [formGroup]="reactiveForm" (ngSubmit)="onSubmit()">
+    <!-- Group of form controls -->
     <div formGroupName="personalDetails">
       <label for="fname">First Name</label>
       <input
@@ -100,6 +101,7 @@
         />
       </ng-container>
       <button (click)="addSkills()">+ Add Skills</button>
+      <!-- use FormArray can generate form controls dynamicly -->
     </div>
 
     <input type="submit" value="Submit" id="btn" />
